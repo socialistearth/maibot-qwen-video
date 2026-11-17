@@ -480,6 +480,10 @@ class QwenBilibiliPlugin(MaiBotPlugin):
         parameters={
             "type": "object",
             "properties": {
+                TICKET_FIELD: {
+                    "type": "string",
+                    "description": "框架内部的一次性会话授权，由可信 Hook 覆写；模型无需填写。",
+                },
                 "url": {
                     "type": "string",
                     "description": "用户消息中原样出现的一个Bilibili视频长链或短链。",
@@ -583,6 +587,10 @@ class QwenBilibiliPlugin(MaiBotPlugin):
         parameters={
             "type": "object",
             "properties": {
+                TICKET_FIELD: {
+                    "type": "string",
+                    "description": "框架内部的一次性会话授权，由可信 Hook 覆写；模型无需填写。",
+                },
                 "message_id": {
                     "type": "string",
                     "description": "可选：当前会话中已收到的QQ视频原始消息ID；省略时使用最近的视频。",

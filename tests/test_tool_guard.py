@@ -166,10 +166,13 @@ class ToolGuardIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse((await self.plugin.handle_bilibili_video_summarize(**args))["success"])
         self.plugin._process_link.assert_not_awaited()
 
-    def test_guard_hook_registered_and_ticket_not_in_model_schema(self):
+    def test_guard_hook_registered_and_internal_ticket_optional_without_identity_fields(self):
         components = self.plugin.get_components()
         guard = next(c for c in components if c["name"] == "qwen_video_tool_session_guard")
         self.assertEqual(guard["type"], "HOOK_HANDLER")
         for item in components:
             if item["type"] == "TOOL":
-                self.assertNotIn(TICKET_FIELD, str(item["metadata"]["parameters_raw"]))
+                schema = item["metadata"]["parameters_raw"]
+                self.assertEqual(schema["properties"][TICKET_FIELD]["type"], "string")
+                self.assertNotIn(TICKET_FIELD, schema.get("required", []))
+                self.assertFalse(set(IDENTITY_FIELDS) & schema["properties"].keys())
