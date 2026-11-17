@@ -8,6 +8,7 @@ from dataclasses import replace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from maibot_qwen_bilibili.chat_video import ChatVideoError, resolve_chat_video
+from maibot_qwen_bilibili.tool_guard import TICKET_FIELD
 from maibot_qwen_bilibili.plugin import QwenBilibiliPlugin
 from maibot_qwen_bilibili.qwen_client import QwenResult, QwenTimeoutError
 
@@ -219,13 +220,13 @@ class ChatVideoPluginTests(unittest.IsolatedAsyncioTestCase):
                 await self.plugin._run_analysis(video, chat_authorization=auth)
         factory.assert_not_called()
 
-    def test_planner_has_optional_message_id_but_no_url_argument(self):
+    def test_planner_has_optional_message_id_and_internal_ticket_but_no_url_argument(self):
         components = self.plugin.get_components()
         tool = next(item for item in components if item["name"] == "qq_video_summarize")
         metadata = tool["metadata"]
         self.assertEqual(metadata["visibility"], "visible")
         schema = metadata["parameters_raw"]
-        self.assertEqual(set(schema["properties"]), {"message_id"})
+        self.assertEqual(set(schema["properties"]), {"message_id", TICKET_FIELD})
         self.assertFalse(schema.get("required"))
 
 
